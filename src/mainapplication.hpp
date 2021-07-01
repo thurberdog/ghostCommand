@@ -16,6 +16,8 @@ public:
     int initilizeCommandPort(QString cmdPort);
     int getSerialNumber();
     int writeData(QByteArray &data);
+    int flatFieldCorrection();
+    int getFPAtemperature();
 public slots:
     void readData();
 signals:

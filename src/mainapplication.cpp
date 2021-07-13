@@ -9,6 +9,7 @@ MainApplication::MainApplication(QObject *parent) : QObject(parent)
 
 int MainApplication::initilizeCommandPort(QString cmdPort)
 {
+    sequence = 1;
     controlPort.setPortName(cmdPort);
     controlPort.setBaudRate(QSerialPort::Baud9600);
     controlPort.setDataBits(QSerialPort::Data8);
@@ -29,7 +30,11 @@ int MainApplication::getSerialNumber()
     functionID[1] = 0x05;
     functionID[2] = 0x00;
     functionID[3] = 0x02;
-    return writeData(functionID);
+    QByteArray crc;
+    crc.resize(2);
+    crc[0] = 0x01;
+    crc[1] = 0x0B;
+    return writeData(functionID, crc);
 }
 
 int MainApplication::flatFieldCorrection()
@@ -41,7 +46,11 @@ int MainApplication::flatFieldCorrection()
     functionID[1] = 0x05;
     functionID[2] = 0x00;
     functionID[3] = 0x07;
-    return writeData(functionID);
+    QByteArray crc;
+    crc.resize(2);
+    crc[0] = 0x22;
+    crc[1] = 0x5C;
+    return writeData(functionID, crc);
 }
 
 int MainApplication::getFPAtemperature()
@@ -58,26 +67,29 @@ int MainApplication::getFPAtemperature()
     functionID[1] = 0x05;
     functionID[2] = 0x00;
     functionID[3] = 0x30;
-    return writeData(functionID);
+    QByteArray crc;
+    crc.resize(2);
+    crc[0] = 0x49;
+    crc[1] = 0x66;
+    return writeData(functionID, crc);
 }
-int MainApplication::writeData(QByteArray &data)
+int MainApplication::writeData(QByteArray &data, QByteArray &crc)
 {
-//    Start frame byte = 0x8E
-//          Channel ID = 0
-//          Bytes 0:3 - sequence number
-//          Bytes 4:7 - function ID
-//          Bytes 8:11 - 0xFFFFFFFF
-//          Bytes 12: - payload (optional)
-//          CRC bytes - unsigned 16-bit CRC
-//          End frame byte = 0xAE
+//          Byte 0 - Start frame byte = 0x8E
+//          Byte 1 - Channel ID = 0
+//          Bytes 2:5 - sequence number
+//          Bytes 6:9 - function ID
+//          Bytes 10:13 - 0xFFFFFFFF
+//          Bytes 14:15 - unsigned 16-bit CRC
+//          Byte 16 - End frame byte = 0xAE
     QByteArray packet;
-    packet.resize(18);
+    packet.resize(17);
     packet[0] = 0x8E;  // Start packet
     packet[1] = 0x00;  // channel number
     packet[2] = 0x00;  // sequence number
     packet[3] = 0x00;  // sequence number
     packet[4] = 0x00;  // sequence number
-    packet[5] = 0x01;  // sequence number
+    packet[5] = sequence & 0xFF;  // sequence number
     packet[6] = data[0]; // function ID
     packet[7] = data[1]; // function ID
     packet[8] = data[2]; // function ID
@@ -86,10 +98,9 @@ int MainApplication::writeData(QByteArray &data)
     packet[11] = 0xFF;
     packet[12] = 0xFF;
     packet[13] = 0xFF;
-    packet[14] = 0x00; // payload
-    packet[15] = 0x00; // CRC
-    packet[16] = 0x00; // CRC
-    packet[17] = 0xAE; // End packet
+    packet[14] = crc[0]; // CRC
+    packet[15] = crc[1]; // CRC
+    packet[16] = 0xAE; // End packet
 
     controlPort.write(packet);
     qDebug() << __LINE__ << __FUNCTION__ << controlPort.errorString();

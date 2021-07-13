@@ -20,10 +20,10 @@ public:
 
     int initilizeCommandPort(QString cmdPort);
     int getSerialNumber();
-    int writeData(QByteArray &data);
     int flatFieldCorrection();
     int getFPAtemperature();
     unsigned short CalcBlockCRC16(unsigned int bufferlen, unsigned char *buffer);
+    int writeData(QByteArray &data, QByteArray &crc);
 public slots:
     void readData();
 signals:

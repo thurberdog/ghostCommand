@@ -20,4 +20,13 @@ Get the current focal plane array (FPA) temperature in Celsius.
 >>> 8E 00 00 00 00 01 00 05 00 30 FF FF FF FF 49 66 AE        
                  
 >>> Frame received (19 bytes)                                                   
->>> 8E 00 00 00 00 01 00 05 00 30 00 00 00 00 01 7C BD CE AE                    
+>>> 8E 00 00 00 00 01 00 05 00 30 00 00 00 00 01 7C BD CE AE   
+
+ Manually request a flat field correction (FFC)
+        """
+        function_id = 0x00050007
+        
+>>> Frame to send (17 bytes)                                                    
+>>> 8E 00 00 00 00 01 00 05 00 07 FF FF FF FF 22 5C AE                          
+>>> Frame received (17 bytes)                                                   
+>>> 8E 00 00 00 00 01 00 05 00 07 00 00 00 00 BB 93 AE                    

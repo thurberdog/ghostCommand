@@ -30,3 +30,16 @@ Get the current focal plane array (FPA) temperature in Celsius.
 >>> 8E 00 00 00 00 01 00 05 00 07 FF FF FF FF 22 5C AE                          
 >>> Frame received (17 bytes)                                                   
 >>> 8E 00 00 00 00 01 00 05 00 07 00 00 00 00 BB 93 AE                    
+
+
+Walked into a note on my desk that you requested the HEX commands to enable the radiometry readings, I assume over USB.
+
+ 
+
+For the USB out to function properly you will need to send it sysctrlSetUsbVideoIR16Mode() ID: 0x000E000D
+
+ 
+
+8E 00 00 00 00 C2 00 0E 00 0D FF FF FF FF 00 00 00 02 C4 F2 AE – Enable Tlinear Output
+
+ 

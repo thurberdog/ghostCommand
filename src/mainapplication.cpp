@@ -3,7 +3,7 @@
 MainApplication::MainApplication(QObject *parent) : QObject(parent)
 {
     connect(&controlPort, SIGNAL(readyRead()), this,
-                            SLOT(readData()));
+                            SLOT(readACM0()));
 }
 
 
@@ -11,7 +11,7 @@ int MainApplication::initilizeCommandPort(QString cmdPort)
 {
     sequence = 1;
     controlPort.setPortName(cmdPort);
-    controlPort.setBaudRate(QSerialPort::Baud9600);
+    controlPort.setBaudRate(QSerialPort::Baud115200);
     controlPort.setDataBits(QSerialPort::Data8);
     controlPort.setStopBits(QSerialPort::OneStop);
     controlPort.setParity(QSerialPort::NoParity);
@@ -104,16 +104,16 @@ int MainApplication::writeData(QByteArray &data, QByteArray &crc)
 
     controlPort.write(packet);
     qDebug() << __LINE__ << __FUNCTION__ << controlPort.errorString();
-    qDebug() << __LINE__ << __FUNCTION__ << packet;
-    controlPort.close();
+    qDebug() << __LINE__ << __FUNCTION__ << packet.toHex();
+
     return controlPort.error();
 }
 
-void MainApplication::readData()
+void MainApplication::readACM0()
 {
     QByteArray data = controlPort.readAll();
     qDebug() << __LINE__ << __FUNCTION__ << controlPort.errorString();
-    qDebug() << __LINE__ << __FUNCTION__ << data;
+    qDebug() << __LINE__ << __FUNCTION__ << data.toHex();
 }
 // Boson is using this method: CRC-16/AUG-CCITT
 // https://github.com/meetanthony/crcphp/blob/master/crc16/crc_16_aug_ccitt.php
@@ -174,4 +174,9 @@ unsigned short MainApplication::CalcBlockCRC16(unsigned int bufferlen, unsigned 
     }
   }
   return crc;
+}
+
+void MainApplication::closeACM()
+{
+        controlPort.close();
 }

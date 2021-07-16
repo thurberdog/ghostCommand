@@ -12,5 +12,6 @@ int main(int argc, char *argv[])
        qDebug() << __LINE__ << __FUNCTION__ << "Command Port Failed to Open " << returnCode;
     }
     mainApplication->getSerialNumber();
+    mainApplication->getFPAtemperature();
     return a.exec();
 }

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QSerialPort>
+#include <QSerialPortInfo>
 #include <QByteArray>
 
 class MainApplication : public QObject
@@ -24,8 +25,9 @@ public:
     int getFPAtemperature();
     unsigned short CalcBlockCRC16(unsigned int bufferlen, unsigned char *buffer);
     int writeData(QByteArray &data, QByteArray &crc);
+    void closeACM();
 public slots:
-    void readData();
+    void readACM0();
 signals:
 
 };

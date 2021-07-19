@@ -11,7 +11,7 @@ int MainApplication::initilizeCommandPort(QString cmdPort)
 {
     sequence = 1;
     controlPort.setPortName(cmdPort);
-    controlPort.setBaudRate(QSerialPort::Baud115200);
+    controlPort.setBaudRate(921600);
     controlPort.setDataBits(QSerialPort::Data8);
     controlPort.setStopBits(QSerialPort::OneStop);
     controlPort.setParity(QSerialPort::NoParity);
